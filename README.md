@@ -163,26 +163,26 @@ Isi kolom **Perkiraan Status** sebelum menjalankan request. Jalankan request di 
 
 | Nomor | Skenario | Perkiraan Status | Status Aktual | Ringkasan Respons | Perubahan Database | Kesimpulan |
 | :---: | :--- | :---: | :---: | :--- | :--- | :--- |
-| 1 | GET `/api/kelas` | | | | | |
-| 2 | GET `/api/jenis-kelamin` | | | | | |
-| 3 | GET `/api/siswa` | | | | | |
-| 4 | GET `/api/pendaftaran-osis` (Daftar pendaftaran & relasi) | | | | | |
-| 5 | GET `/api/pendaftaran-osis/1` (Detail pendaftaran ada) | | | | | |
-| 6 | GET `/api/pendaftaran-osis/999` (Detail ID tidak ada) | | | | | |
-| 7 | POST valid (siswa belum terdaftar) | | | | | |
-| 8 | POST kedua dengan `siswa_id` yang sama | | | | | |
-| 9 | POST dengan `siswa_id` tidak ada (misal: 9999) | | | | | |
-| 10 | POST dengan `pilihan_bidang` tidak valid (misal: "robotik") | | | | | |
-| 11 | POST dengan motivasi 19 karakter | | | | | |
-| 12 | POST dengan motivasi 301 karakter | | | | | |
-| 13 | PUT valid dengan `siswa_id` tetap sama | | | | | |
-| 14 | PUT menggunakan `siswa_id` milik pendaftaran lain | | | | | |
-| 15 | PUT dengan `pilihan_bidang` tidak valid | | | | | |
-| 16 | PUT dengan motivasi di luar batas panjang | | | | | |
-| 17 | PUT terhadap ID pendaftaran yang tidak tersedia (misal: 999) | | | | | |
-| 18 | DELETE terhadap pendaftaran yang tersedia (misal: ID 2) | | | | | |
-| 19 | GET detail terhadap ID yang sudah dihapus | | | | | |
-| 20 | DELETE kembali terhadap ID yang sudah dihapus | | | | | |
+| 1 | GET `/api/kelas` | 200 | 200 | Semua data kelas | - | Berhasil |
+| 2 | GET `/api/jenis-kelamin` | 200 | 200 | Semua data jenis kelamin | - | Berhasil |
+| 3 | GET `/api/siswa` | 200 | 200 | Semua data siswa | - | Berhasil |
+| 4 | GET `/api/pendaftaran-osis` (Daftar pendaftaran & relasi) | 200 | 200 | Semua data pendaftar | - | Berhasil |
+| 5 | GET `/api/pendaftaran-osis/1` (Detail pendaftaran ada) | 200 | 200 | Data sesuai id | - | Berhasil |
+| 6 | GET `/api/pendaftaran-osis/999` (Detail ID tidak ada) | 404 | 404 | id 999 tidak ada datanya | - | Berhasil |
+| 7 | POST valid (siswa belum terdaftar) | 201 | 201 | terdaftar id siswa yang belum terdaftar | - | Berhasil |
+| 8 | POST kedua dengan `siswa_id` yang sama | 422 | 422 | id siswa sudah terdaftar | - | Berhasil |
+| 9 | POST dengan `siswa_id` tidak ada (misal: 9999) | 422 | 422 | metode post berhasil namun id siswa tidak exist | - | Berhasil |
+| 10 | POST dengan `pilihan_bidang` tidak valid (misal: "robotik") | 422 | 422 | metode post berhasil namun pilihan bidang tidak sesuai dengan opsi yang diberikan | - | Berhasil |
+| 11 | POST dengan motivasi 19 karakter | 422 | 422 | karakter pada motivasi tidak memenuhi syarat minimum | - | Berhasil |
+| 12 | POST dengan motivasi 301 karakter | 422 | 422 | karakter pada motivasi melebihi syarat maksimal | - | Berhasil |
+| 13 | PUT valid dengan `siswa_id` tetap sama | 200 | 200 | Berhasil edit data | - | Berhasil |
+| 14 | PUT menggunakan `siswa_id` milik pendaftaran lain | 200 | 200 | id siswa terubah | - | Berhasil |
+| 15 | PUT dengan `pilihan_bidang` tidak valid | 422 | 422 | pilihan bidang tidak sesuai dengan opsi yang diberikan | -  | Berhasil |
+| 16 | PUT dengan motivasi di luar batas panjang | 422 | 422 | Motivasi melebihi maksimal karakter | - | Berhasil |
+| 17 | PUT terhadap ID pendaftaran yang tidak tersedia (misal: 999) | 422 | 422 | id siswa tidak terdaftar dalam data | - | Berhasil |
+| 18 | DELETE terhadap pendaftaran yang tersedia (misal: ID 2) | 200 | 200 | Data terhapus sesuai id | - | Berhasil |
+| 19 | GET detail terhadap ID yang sudah dihapus | 404 | 404 | Data yang dicari tidak ada | - | Berhasil |
+| 20 | DELETE kembali terhadap ID yang sudah dihapus | 404 | 404 | id data yang dicari tidak ada | -  | Berhasil |
 
 ### Aturan Pembuktian Database:
 - **POST valid:** Jumlah record pada tabel `pendaftaran_osis` bertambah tepat satu.
@@ -197,17 +197,56 @@ Isi kolom **Perkiraan Status** sebelum menjalankan request. Jalankan request di 
 
 Jawab pertanyaan berikut pada laporan akhir tanpa bantuan AI:
 
-1. Saat pengujian melalui Postman, siapa yang bertindak sebagai *client* dan siapa yang bertindak sebagai *server*? Bagian dari HTTP request mana yang menentukan proses yang dijalankan oleh Laravel?
+1. Saat pengujian melalui Postman, siapa yang bertindak sebagai *client* dan siapa yang bertindak sebagai *server*? Bagian dari HTTP request mana yang menentukan proses yang dijalankan oleh Laravel? 
+Jawaban: Postman bertindak sebagai client, Laravel bertindak sebagai server. HTTP request yang ditentukan agar dapat dijalankan oleh laravel ialah http request/endpoint yang terdaftar pada file api.php
 2. Mengapa request pendaftaran hanya mengirimkan `siswa_id`, bukan mengirim ulang data nama siswa, kelas, dan jenis kelamin?
+Jawaban: Dikarnakan pada siswa_id sudah ada relasi ke tabel data kelas dan jenis kelamin
 3. Telusuri satu alur request `POST` dari rute (`routes/api.php`), controller, proses validasi, query database, hingga respon JSON yang dikembalikan. Tunjukkan lokasi kode yang terlibat!
+Jawaban:
+```laravel
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+          'siswa_id' => ['required', 'integer', "exists:siswa,id", "unique:pendaftaran_osis,siswa_id"],
+          'pilihan_bidang' => ['required', 'string', "in:kepemimpinan,keagamaan,olahraga,seni"],
+          'motivasi' => ['required', 'string', "min:20", "max:300"],
+          ]);
+
+          $pendaftaran = PendaftaranOsis::create([
+            'siswa_id' => $validated['siswa_id'],
+            'pilihan_bidang' => $validated['pilihan_bidang'],
+            'motivasi' => $validated['motivasi'],
+        ]);
+
+        $pendaftaran->load(['siswa.kelas', 'siswa.jenisKelamin']);
+
+        return response()->json([
+            'message' => 'Pendaftaran berhasil dibuat.',
+            'data' => new PendaftaranOsisResource($pendaftaran),
+        ], 201);
+    }
+```
 4. Jika `siswa_id` yang dikirim tidak tersedia di tabel `siswa`, apa perbedaan dampak antara menolaknya di tahap validasi API dengan membiarkannya gagal di tahap penyimpanan database?
+Jawaban: Dampak terhadap ditolak pada validasi API menyebabkan penyimpanan tertolak karna tidak sesuai dengan validasi.
+         Dampak terhadap gagal di tahap penyimpanan database menyebabkan data yang gagal terkirim ke database walaupun sudah berhasil tervalidasi
 5. Mengapa pendaftaran kedua dari siswa yang sama perlu ditolak meskipun seluruh format field yang dikirim sudah benar?
+Jawaban: Karna pendaftaran OSIS hanya boleh 1 id siswa per pendaftaran, tidak boleh ada redudansi pada id siswa
 6. Mengapa pada method `PUT`, `siswa_id` milik record itu sendiri boleh digunakan, sedangkan `siswa_id` milik pendaftaran lain harus ditolak?
+Jawaban: Agar siswa hanya boleh mengubah data pendaftaran miliknya sendiri, tidak bisa mengubah milik orang lain agar tidak terjadi manipulasi/perubahan pada data siswa lain tanpa persetujuan siswa tersebut
 7. Bagaimana cara membuktikan secara konkret bahwa method `PUT` benar-benar mengubah data, bukan hanya mengembalikan pesan berhasil?
+Jawaban: Dengan pengecekan data sesuai id data yang diubah serta dengan status kode berhasil "200"
 8. Mengapa proses penghapusan pendaftaran (`DELETE`) tidak boleh sekaligus menghapus data siswa yang bersangkutan?
+Jawaban: Karna berbeda fungsi, jika penghapusan memang bertujuan untuk pendaftaran maka untuk pendaftaran itu sendiri, serta dengan memiliki sistem yang berbeda/tidak disatukan penghapusannya, dapat membuat user memilih apa yang ingin ia hapus
 9. Mengapa request `DELETE` pertama pada ID tertentu berhasil (204), sedangkan request `DELETE` kedua terhadap ID yang sama menghasilkan 404?
+Jawaban: Dikarnakan request pertama data yang ingin dihapus masih ada, setelah request pertama itu selesai maka datanya sudah dihapus/tidak ada. Jadi ketika request kedua dilakukan, id pada data yang dicari tidak ada karna sudah terhapus saat request pertama
 10. Pilih satu masalah dari L1–L9 yang kamu perbaiki. Jelaskan secara rinci: perilaku sebelum perbaikan, kode yang diubah, dan bukti pengujian setelah perbaikan!
+Jawaban:
+- L3
+- Perilaku awal = satu siswa masih dapat daftar dengan id yang sama lebih dari 1 kali
+- Kode yang diubah = penambahan validasi kalau id_siswa yang diinput harus unique (tidak boleh yang sudah terdaftar pada database)
+- Bukti pengujian = satu siswa hanya dapat daftar osis 1 kali saja
 11. Apakah status respons berhasil (misal HTTP 200) sudah cukup untuk membuktikan bahwa API bekerja dengan benar? Jelaskan alasanmu berdasarkan temuan selama pengujian!
+Jawaban: Tidak hanya lewat status kode 200 saja, perlu ada pengecekan kembali data yang dilakukan request method agar sesuai dengan apa yang diharapkan, karna walaupun status kode muncul berhasil (200) belum tentu sesuai dengan apa yang diharapkan
 
 ---
 
