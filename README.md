@@ -161,6 +161,10 @@ Project starter ini sengaja disisipi **tepat sembilan masalah logika API (L1 –
 
 Isi kolom **Perkiraan Status** sebelum menjalankan request. Jalankan request di Postman, lalu isi hasil pengamatan aktualmu pada tabel berikut:
 
+# Nama : Hanif El Hakim
+# Kelas : XI-1 / XI-RPL
+# NIS : 252610028
+
 | Nomor | Skenario | Perkiraan Status | Status Aktual | Ringkasan Respons | Perubahan Database | Kesimpulan |
 | :---: | :--- | :---: | :---: | :--- | :--- | :--- |
 | 1 | GET `/api/kelas` | 200 | 200 | Semua data kelas | - | Berhasil |
